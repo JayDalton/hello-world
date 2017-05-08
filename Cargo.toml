@@ -1,0 +1,10 @@
+[package]
+name = "hello-world"
+version = "0.1.0"
+authors = ["Thomas G. <github@t-jay.net>"]
+
+[dependencies]
+
+[[bin]]
+name = "hello-world"
+path = "main.rs"
