@@ -1,3 +1,3 @@
-# hello-world
+# Hello Rust Console
 
-Trying some new steps on git.
+Trying some new steps on rust programming language.
