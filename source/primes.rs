@@ -4,46 +4,64 @@ use std::time::Instant;
 use std::time::Duration;
 use std::collections::HashMap;
 
-pub fn my_sieve(grenze: usize) -> Vec<bool> {
-    let mut vec = Vec::new();
-    let mut liste = HashMap::new();
+pub fn int_sqrt(n:usize) -> usize {
+    if n < (1 << 52) {
+        (n as f64).sqrt() as usize
+    } else {
+        (n as f64).sqrt() as usize
+    }
+}
 
-    liste.insert(2, true);
-    liste.insert(3, true);
+pub fn stupid_sieve(max_num: usize) -> Vec<bool> {
 
-//   for (int n = 0, x = 1; x <= sqrt(grenze); x++)
-//   {
-//     for (int y = 1; y <= sqrt(grenze); y++)
-//     {
-//       n = 4 * x * x + y * y;
-//       if (n <= grenze && (n % 12 == 1 || n % 12 == 5)) {
-//         liste.at(n) = liste.at(n) ? 0 : 1;
-//       }
-   
-//       n = 3 * x * x + y * y;
-//       if (n <= grenze &&  n % 12 == 7) {
-//         liste.at(n) = liste.at(n) ? 0 : 1;
-//       }
-   
-//       n = 3 * x * x - y * y;
-//       if (x > y && n <= grenze && n % 12 == 11) {
-//         liste.at(n) = liste.at(n) ? 0 : 1;
-//       }
-//     }
-//   }
+    let mut vec = vec![false; max_num];
+    vec[2] = true;
+    vec[3] = true;
 
-//   for (int n = 5; n <= sqrt(grenze); n++)
-//   {
-//     if (liste.at(n))
-//     {
-//       for (int k = 1; k * n * n < grenze; k++)
-//       {
-//         liste.at(k * n * n) = 0;
-//       }
-//     }
-//   }
+    for x in 1..int_sqrt(max_num)+1 {
+        for y in 1..int_sqrt(max_num)+1 {
 
+            // let n = 4 * x * x + y * y;
+            match (4 * x * x).checked_add(y * y){
+                Some(n) => 
+                    if n <= max_num && (n % 12 == 1 || n % 12 == 5) {
+                        vec[n] = if vec[n] {false} else {true};
+                    }
+                ,
+                None => continue
+            }
 
+            // let n = 3 * x * x + y * y;
+            match (3 * x * x).checked_add(y * y){
+                Some(n) => 
+                    if n <= max_num && (n % 12 == 7) {
+                        vec[n] = if vec[n] {false} else {true};
+                    }
+                ,
+                None => continue
+            }
+
+            // let n = 3 * x * x - y * y;
+            match (3 * x * x).checked_sub(y * y){
+                Some(n) => 
+                    if x > y && n <= max_num && (n % 12 == 11) {
+                        vec[n] = if vec[n] {false} else {true};
+                    }
+                ,
+                None => continue
+            }
+        }
+    }
+
+    for n in 5..int_sqrt(max_num)+1 {
+        if vec[n] {
+            let mut k = 1;
+            while k * n * n < max_num {
+                vec[k * n * n] = false;
+                k+=1;
+            }
+        }
+    }
     vec
 }
 

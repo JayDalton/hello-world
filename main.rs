@@ -1,4 +1,5 @@
 use std::io;
+use std::f64;
 use std::iter::{empty, once};
 use std::time::Instant;
 use std::time::Duration;
@@ -21,6 +22,12 @@ fn get_duration(strt: Instant) -> u64 {
 // do it 1000 times to get a reasonable execution time span...
 fn compare_primealgos(){
     let n = 10000;
+
+    let vrslt = prime::stupid_sieve(100);
+    println!("stupid {:?}", vrslt.iter().filter(|&n| *n == true).collect::<Vec<_>>());
+    let strt = Instant::now();
+    let rslt = (1..1000).map(|_| prime::stupid_sieve(n)).last().unwrap();
+    println!("stupid_sieve {} took {} milliseconds.", rslt.iter().filter(|&n| *n == true).count(), get_duration(strt));
 
     let vrslt = prime::simple_sieve(100);
     println!("simple {:?}", vrslt);
@@ -116,6 +123,23 @@ fn dialog_3(){
 }
 
 fn main() {
+
+    // println!("{}", f64::MIN_POSITIVE);
+    // println!("{}", f64::MAX);
+
+    // let num = 1000000000;
+
+    // let mut res = prime::stupid_sieve(num);
+    // // for (a, b) in res.iter().enumerate() {
+    // //     if *b {
+    // //         println!("a {} b {}", a, b);
+    // //     }
+    // // }
+    // res.retain(|&n| n == true );
+    // println!("Stupid: {}", res.len());
+
+    // let res = prime::simple_sieve(num);
+    // println!("Simple: {}", res.len());
 
     compare_primealgos();
 
