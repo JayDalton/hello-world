@@ -1,8 +1,8 @@
-use std::io;
+// use std::io;
 use std::iter::{empty, once};
-use std::time::Instant;
-use std::time::Duration;
-use std::collections::HashMap;
+// use std::time::Instant;
+// use std::time::Duration;
+// use std::collections::HashMap;
 
 pub fn int_sqrt(n:usize) -> usize {
     if n < (1 << 52) {

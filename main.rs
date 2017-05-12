@@ -1,9 +1,12 @@
-use std::io;
-use std::f64;
-use std::iter::{empty, once};
+// use std::io;
+// use std::f64;
+// use std::iter::{empty, once};
+use std::io::{self, Write};
+use std::fmt::Display;
+use std::process;
 use std::time::Instant;
-use std::time::Duration;
-use std::collections::HashMap;
+// use std::time::Duration;
+// use std::collections::HashMap;
 
 mod source;
 use source::primes as prime;
@@ -50,23 +53,24 @@ fn compare_primealgos(){
 
 fn primesums(grenze: usize, zeigen: bool) -> usize {
     let mut anzahl: usize = 0;
-    let liste = source::primes::simple_sieve(grenze);
-    for n in 0..grenze
+    let liste = source::primes::stupid_sieve(grenze);
+
+    for n in 0..grenze / 2
     {
-        // if (liste[n] && liste[grenze - n])
-        // {
-        //     // if (zeigen) {
-        //     //     cout << "\n " << grenze << " = " << n << " + " << grenze - n;
-        //     // }
-        //     anzahl++;
-        // }
+        if liste[n] && liste[grenze - n]
+        {
+            if zeigen {
+                println!(" {} = {} + {}", grenze, n, grenze - n);
+            }
+            anzahl += 1;
+        }
     }
     anzahl
 }
 
 fn get_number(msg: &str) -> u32 {
 
-    println!("{}", msg);
+    print!("{}: ", msg);
 
     let mut select = String::new();
     io::stdin().read_line(&mut select).expect("Failed to read line!");
@@ -76,6 +80,19 @@ fn get_number(msg: &str) -> u32 {
         Err(_) => 0
     };
     select
+}
+
+fn grab_input(msg: &str) -> io::Result<String> {
+    let mut buf = String::new();
+    print!("{}: ", msg);
+    try!(io::stdout().flush());
+    try!(io::stdin().read_line(&mut buf));
+    Ok(buf)
+}
+
+fn exit_err<T: Display>(msg: T, code: i32) -> ! {
+    let _ = writeln!(&mut io::stderr(), "Error: {}", msg);
+    process::exit(code)
 }
 
 fn dialog_menu() -> u8 {
@@ -88,15 +105,12 @@ fn dialog_menu() -> u8 {
     println!("(3) Alle Goldbach-Zerlegungen von n");
     println!("(_) Programm beenden");
     println!("");
-    println!("Ihre Wahl: ");
-    
-    let mut select = String::new();
-    io::stdin().read_line(&mut select).expect("Failed to read line!");
-    let select: u8 = match select.trim().parse()
-    {
-        Ok(num) => num,
-        Err(_) => 0
-    };
+
+    let select: u8 = grab_input("Ihre Wahl")
+        .unwrap_or_else(|e| exit_err(&e, e.raw_os_error().unwrap_or(-1)))
+        .trim()
+        .parse()
+        .unwrap_or_else(|e| exit_err(&e, 2));
     select
 }
 
@@ -111,15 +125,17 @@ fn dialog_2(){
     println!("Bitte geben sie eine gerade ganze Zahl m > ... ein: ");
 }
 
-fn dialog_3(){
-
-    let mut anzahl: u32 = 0;
+fn dialog_3()
+{
     let mut grenze: u32 = 0;
-
     while grenze <= 2 || 0 != grenze % 2 {
-        grenze = get_number("Bitte geben sie eine gerade ganze Zahl n > 2 ein: ");
+        grenze = grab_input("Bitte geben sie eine gerade ganze Zahl n > 2 ein")
+            .unwrap_or_else(|e| exit_err(&e, e.raw_os_error().unwrap_or(-1)))
+            .trim().parse().unwrap_or_else(|e| exit_err(&e, 2));
     }
 
+    let anzahl = primesums(grenze as usize, false);
+    println!("Es gibt {} Darstellungen von {} als Summe zweier Primenzahlen.", anzahl, grenze);
 }
 
 fn main() {
@@ -141,16 +157,16 @@ fn main() {
     // let res = prime::simple_sieve(num);
     // println!("Simple: {}", res.len());
 
-    compare_primealgos();
+    // compare_primealgos();
 
-    // loop {
+    loop {
 
-    //     match dialog_menu() {
-    //         1 => dialog_1(),
-    //         2 => dialog_2(),
-    //         3 => dialog_3(),
-    //         _ => break,
-    //     }
-    // }
+        match dialog_menu() {
+            1 => dialog_1(),
+            2 => dialog_2(),
+            3 => dialog_3(),
+            _ => break,
+        }
+    }
 
 }
