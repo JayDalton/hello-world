@@ -59,9 +59,28 @@ pub mod dialog {
         println!("Es gibt ... Darstellungen von .... als Summe zweier Zahlen.");
     }
 
-    pub fn dialog_2(){
-        println!("Bitte geben sie eine gerade ganze Zahl n > 2 ein: ");
-        println!("Bitte geben sie eine gerade ganze Zahl m > ... ein: ");
+    pub fn dialog_2()
+    {
+        let mut lower: usize = 0;
+        while lower <= 2 || 0 != lower % 2 {
+            lower = super::input::get_number("Bitte geben sie eine gerade ganze Zahl n > 2 ein");
+        }
+
+        let mut upper: usize = 0;
+        while upper <= lower || 0 != upper % 2 {
+            let msg = format!("Bitte geben sie eine gerade ganze Zahl m > {} ein", lower);
+            upper = super::input::get_number(&msg);
+        }
+
+        println!("");
+        println!("Anzahl Goldbachzerlegungen");
+        println!("");
+
+        while lower <= upper {
+            let number = super::primes::primesums(lower, false);
+            println!("{} = {} ", lower, number);
+            lower += 2;
+        }
     }
 
     pub fn dialog_3()
@@ -71,7 +90,7 @@ pub mod dialog {
             grenze = super::input::get_number("Bitte geben sie eine gerade ganze Zahl n > 2 ein");
         }
 
-        let anzahl = super::primes::primesums(grenze, false);
+        let anzahl = super::primes::primesums(grenze, true);
         println!("Es gibt {} Darstellungen von {} als Summe zweier Primenzahlen.", anzahl, grenze);
     }
 }
