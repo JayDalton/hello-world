@@ -54,9 +54,13 @@ pub mod dialog {
     }
 
     pub fn dialog_1() {
-        println!("Bitte geben sie eine gerade ganze Zahl n > 2 ein: ");
+        let mut lower: usize = 0;
+        while lower <= 2 || 0 != lower % 2 {
+            lower = super::input::get_number("Bitte geben sie eine gerade ganze Zahl n > 2 ein");
+        }
 
-        println!("Es gibt ... Darstellungen von .... als Summe zweier Zahlen.");
+        let number = super::primes::primesums(lower, false);
+        println!("Es gibt {} Darstellungen von {} als Summe zweier Primenzahlen.", number, lower);
     }
 
     pub fn dialog_2()
