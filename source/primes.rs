@@ -2,7 +2,7 @@
 use std::iter::{empty, once};
 use std::time::Instant;
 // use std::time::Duration;
-// use std::collections::HashMap;
+use std::collections::HashMap;
 
 pub fn int_sqrt(n:usize) -> usize {
     if n < (1 << 52) {
@@ -10,6 +10,45 @@ pub fn int_sqrt(n:usize) -> usize {
     } else {
         (n as f64).sqrt() as usize
     }
+}
+
+fn get_factors(x:u64) -> Vec<u64> {
+    let mut f = Vec::new();
+    let max = (x as f64).sqrt().ceil() as u64;
+    let mut iter = 1;
+    while iter <= max {
+        if x % iter == 0 {
+            f.push(iter);
+        }
+        iter += 2;
+    }
+    f
+}
+
+fn is_prime(x:u64) -> bool {
+    get_factors(x).len() == 1
+}
+
+fn get_prime_factors(x:u64) -> Vec<u64> {
+    let mut result = Vec::new();
+    for n in get_factors(x) {
+        if is_prime(n) {
+            result.push(n);
+        }
+    }
+    result
+}
+
+fn get_largest_prime(x:u64) -> u64 {
+    get_prime_factors(x).pop().unwrap()
+}
+
+pub fn athkin_sieve(max_num: usize) -> HashMap<usize, bool> {
+    let mut result = HashMap::new();
+    result.insert(2usize, true);
+    result.insert(3usize, true);
+
+    result
 }
 
 pub fn stupid_sieve(max_num: usize) -> Vec<bool> {
@@ -180,18 +219,45 @@ pub fn compare_primealgos(){
 
 pub fn primesums(grenze: usize, zeigen: bool) -> usize {
     let mut anzahl: usize = 0;
-    let liste = stupid_sieve(grenze);
 
-    for n in 0..grenze / 2
-    {
-        if liste[n] && liste[grenze - n]
-        {
-            if zeigen {
-                println!(" {} = {} + {}", grenze, n, grenze - n);
-            }
-            anzahl += 1;
-        }
+    // let liste = stupid_sieve(grenze).iter().filter(|&n| *n == true).collect::<Vec<_>>();
+    let liste = stupid_sieve(grenze).iter().enumerate().filter_map(|(pr, &is_pr)| if is_pr {Some(pr)} else {None} ).collect::<Vec<_>>();
+    println!("{:?}", liste);
+    // for (a, b) in liste.iter().enumerate() {
+    //     if *b {
+    //         println!("a {} b {}", a, b);
+    //     }
+    // }
+
+
+
+    let result = optimized_sieve(grenze).collect::<Vec<_>>();
+    println!("{:?}", result);
+    for a in result.iter().rev().collect::<Vec<_>>() {
+        println!("a {}", a);
     }
+
+    // let length = result.len();
+    // for n in 0..length {
+    //     println!("{} + {}", result[n], result[length - n]);
+    //     // if result[n] + result[length - n - 1] == length {
+    //     //     anzahl += 1;
+    //     //     if zeigen {
+    //     //         println!(" {} = {} + {}", grenze, n, grenze - n);
+    //     //     }
+    //     // }
+    // }
+
+    // for n in 0..grenze / 2
+    // {
+    //     if liste[n] && liste[grenze - n]
+    //     {
+    //         if zeigen {
+    //             println!(" {} = {} + {}", grenze, n, grenze - n);
+    //         }
+    //         anzahl += 1;
+    //     }
+    // }
     anzahl
 }
 

@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Thomas G. <github@t-jay.net>"]
 
 [dependencies]
+rustfft = "2.0.0"
 
 [[bin]]
 name = "hello-world"
